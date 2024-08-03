@@ -505,13 +505,8 @@ export default class Table {
       }
       return this;
     }
+    //this._editor?._currentCell;
     const v = _cells.get(row, col);
-
-    // If in formula editing mode, return the formula instead of the calculated value
-    if (this._isFormulaEditing && this._formulas[row][col]) {
-      //return this._formulas[row][col];
-    }
-
     return v != null ? v[2] : v;
   }
 
