@@ -136,7 +136,7 @@ export default class Table {
   _overlayer: Overlayer;
 
   _canvas: HElement;
-
+  _tooltip: TableTooltip;
   // event emitter
   _emitter = new EventEmitter();
 
@@ -166,6 +166,7 @@ export default class Table {
     });
     this._data = defaultData();
 
+    this._tooltip = new TableTooltip(this._container);
     this._cdata = Array()
       .fill(null)
       .map(() => Array().fill(0));
@@ -255,6 +256,10 @@ export default class Table {
         this._emitter.emit('click', cell, evt);
       }
     });
+
+    this._editor.moveChanger((value) => {
+      console.log(value);
+    });
   }
 
   handleCellClick(handler: (cell: ViewportCell, evt: MouseEvent) => void) {
@@ -262,6 +267,11 @@ export default class Table {
     this.onSelectValueChange((cell: ViewportCell) => {
       const formula = this.getCellFormula(cell.row, cell.col);
       this._formulaBar.value(formula || '');
+      if (formula) {
+        this._tooltip.show(cell, formula);
+      } else {
+        this._tooltip.hide();
+      }
     });
   }
 
@@ -793,6 +803,43 @@ function resizeContentRect(t: Table) {
   };
 }
 
+export class TableTooltip {
+  private _container: HElement;
+  private _tooltip: HElement;
+
+  constructor(container: HElement) {
+    this._container = container;
+    this._tooltip = this._createTooltip();
+    this._container.append(this._tooltip);
+  }
+
+  private _createTooltip(): HElement {
+    return h('div').css({
+      position: 'absolute',
+      color: 'white',
+      padding: '5px',
+      borderRadius: '3px',
+      fontSize: '12px',
+      zIndex: '1000',
+      display: 'none',
+      'background-color': 'lightblue',
+    });
+  }
+
+  show(cell: ViewportCell, formula: string): void {
+    const { x, y, width } = cell;
+    this._tooltip.html(formula).css({
+      left: `${x + 25}px`,
+      top: `${y - 25}px`,
+      maxWidth: `${width}px`,
+      display: 'block',
+    });
+  }
+
+  hide(): void {
+    this._tooltip.css('display', 'none');
+  }
+}
 declare global {
   interface Window {
     wolf: any;
