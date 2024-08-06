@@ -132,5 +132,5 @@ export function cellValue(cell: DataCell): DataCellValue {
 
 export function cellValueString(cell: DataCell): string {
   const v = cellValue(cell);
-  return `${v !== null && v !== undefined ? v : ''}`;
+  return `${v ?? ''}`;
 }

@@ -124,7 +124,7 @@ export default class Selector {
     return this;
   }
 
-  addRange(range: Range, clear: boolean = true) {
+  addRange(range: Range, clear = true) {
     if (clear) {
       this._ranges.length = 0;
       this.clear();
@@ -215,7 +215,9 @@ export default class Selector {
 
   clear() {
     [this._areas, this._autofillAreas, this._copyAreas].forEach((it) => {
-      it.forEach((it1) => it1.clear());
+      it.forEach((it1) => {
+        it1.clear();
+      });
       it.length = 0;
     });
   }

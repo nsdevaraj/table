@@ -11,11 +11,11 @@ export default class Scrollbar {
   _: HElement;
   _content: HElement;
 
-  _value: number = 0;
+  _value = 0;
 
-  _maxValue: number = 0;
+  _maxValue = 0;
 
-  _lastOffset: number = 0;
+  _lastOffset = 0;
 
   _type: 'vertical' | 'horizontal';
 
@@ -48,7 +48,7 @@ export default class Scrollbar {
     return this;
   }
 
-  scrollBy(value: number): Scrollbar {
+  scrollBy(value: number): this {
     if (value) {
       this.scroll(this._value + value);
     }

@@ -9,7 +9,7 @@ import TableRenderer, { Style, ColHeader, RowHeader, Range, Rect, Border, Format
 import { TableData, Cells, FormulaParser, DataCell, DataRow, DataCol, DataCellValue } from './data';
 import { EventEmitter } from './event';
 import FParser from './fParser';
-export declare type TableRendererOptions = {
+export interface TableRendererOptions {
     style?: Partial<Style>;
     headerStyle?: Partial<Style>;
     rowHeader?: Partial<RowHeader>;
@@ -17,14 +17,14 @@ export declare type TableRendererOptions = {
     gridline?: Partial<Gridline>;
     headerGridline?: Partial<Gridline>;
     freeGridline?: Partial<Gridline>;
-};
-export declare type TableDataOptions = {
+}
+export interface TableDataOptions {
     rows?: number;
     cols?: number;
     rowHeight?: number;
     colWidth?: number;
-};
-export declare type TableOptions = {
+}
+export interface TableOptions {
     minRowHeight?: number;
     minColWidth?: number;
     scrollable?: boolean;
@@ -34,7 +34,7 @@ export declare type TableOptions = {
     copyable?: boolean;
     data?: TableDataOptions;
     renderer?: TableRendererOptions;
-};
+}
 export declare type MoveDirection = 'up' | 'down' | 'left' | 'right';
 export { HElement, h };
 export default class Table {

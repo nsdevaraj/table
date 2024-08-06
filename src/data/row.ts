@@ -51,8 +51,8 @@ export function rowsHeight(data: TableData, min?: number, max?: number) {
     return total;
   }
   return sum(
-    min !== undefined ? min : 0,
-    max !== undefined ? max : rows.len,
+    min ?? 0,
+    max ?? rows.len,
     (i) => rowHeight(data, i)
   );
 }

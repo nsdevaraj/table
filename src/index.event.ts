@@ -8,11 +8,21 @@ import scrollbar from './index.scrollbar';
 export function initEvents(t: Table) {
   const { _canvas } = t;
   _canvas
-    .on('mousedown', (evt) => mousedownHandler(t, evt))
-    .on('mousemove', (evt) => mousemoveHandler(t, evt))
-    .on('keydown', (evt) => keydownHandler(t, evt))
-    .on('wheel.prevent', (evt) => wheelHandler(t, evt))
-    .on('contextmenu.prevent', (evt) => contextmenuHandler(t, evt))
+    .on('mousedown', (evt) => {
+      mousedownHandler(t, evt);
+    })
+    .on('mousemove', (evt) => {
+      mousemoveHandler(t, evt);
+    })
+    .on('keydown', (evt) => {
+      keydownHandler(t, evt);
+    })
+    .on('wheel.prevent', (evt) => {
+      wheelHandler(t, evt);
+    })
+    .on('contextmenu.prevent', (evt) => {
+      contextmenuHandler(t, evt);
+    })
     .on('dblclick.prevent', () => {
       editor.reset(t);
     });

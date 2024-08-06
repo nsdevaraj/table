@@ -10,13 +10,13 @@ import { row, rowHeight, rowsHeight, isLastRow, stepRowIndex } from './row';
 import { copy } from './copy';
 
 export type DataRow = Row;
-export type DataRows = {
+export interface DataRows {
   len: number;
   [key: number]: DataRow;
 };
 
 export type DataCol = Col;
-export type DataCols = {
+export interface DataCols {
   len: number;
   [key: number]: DataCol;
 };
@@ -26,7 +26,7 @@ export type DataCell = Cell;
 export type IndexDataCell = [number, number, DataCell];
 export type DataCellValue = string | number | null | undefined;
 
-export type TableData = {
+export interface TableData {
   rows: DataRows;
   cols: DataCols;
   rowHeight: number;

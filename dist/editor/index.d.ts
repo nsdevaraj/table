@@ -12,7 +12,7 @@ export default class Editor {
     _visible: boolean;
     _moveChanger: MoveChanger;
     _changer: Changer;
-    constructor(cssClass: String);
+    constructor(cssClass: string);
     get visible(): boolean;
     target(target: HElement): this;
     cellIndex(r: number, c: number): this;

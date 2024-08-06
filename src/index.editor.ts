@@ -31,7 +31,7 @@ function move(t: Table) {
     if (_editor.visible && _focusArea) {
       const { _rect, _target } = _focusArea;
       const { viewport } = _renderer;
-      if (_rect && _target && viewport && viewport.inAreas(..._focus)) {
+      if (_rect && _target && viewport?.inAreas(..._focus)) {
         _editor.rect(_rect).target(_target).show();
       } else {
         _editor.rect({ x: -100, y: -100, width: 0, height: 0 }).hide();

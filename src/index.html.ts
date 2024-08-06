@@ -141,7 +141,7 @@ export function fromHtml(
   [toStartRow, toStartCol]: [number, number]
 ): [number, number] {
   const toEnd: [number, number] = [0, 0];
-  if (html && html.includes('</table>')) {
+  if (html?.includes('</table>')) {
     const { _data } = t;
     const dstyle = _data.style;
     const template = document.createElement('template');

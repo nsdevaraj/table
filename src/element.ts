@@ -10,22 +10,22 @@ function createFragment(...nodes: (HElement | Node | string)[]) {
   return fragment;
 }
 
-export type CSSAttrs = {
+export interface CSSAttrs {
   left?: number;
   top?: number;
   width?: number;
   height?: number;
   position?: string;
   [property: string]: any;
-};
+}
 
 export default class HElement {
   _: HTMLElement;
   _data = new Map();
 
-  constructor(tag: string | Node, className?: string | string[] | Object) {
+  constructor(tag: string | Node, className?: string | string[] | object) {
     this._ =
-      tag instanceof Node ? <HTMLElement>tag : document.createElement(tag);
+      tag instanceof Node ? (tag as HTMLElement) : document.createElement(tag);
     if (className) {
       if (typeof className === 'string') {
         this._.className = className;
@@ -143,7 +143,7 @@ export default class HElement {
     return window.getComputedStyle(this._);
   }
 
-  show(flag: boolean = true) {
+  show(flag = true) {
     this.css('display', flag ? 'block' : 'none');
     return this;
   }
@@ -208,7 +208,7 @@ export default class HElement {
 
 export function h(
   tag: string | HTMLElement,
-  className?: string | string[] | Object
+  className?: string | string[] | object
 ) {
   return new HElement(tag, className);
 }
