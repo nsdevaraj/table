@@ -55,10 +55,12 @@ export class EventEmitter {
     return this;
   }
 
-  emit(type: String, ...args: any) {
+  emit(type: string, ...args: any) {
     const { _events } = this;
     if (_events.has(type)) {
-      _events.get(type).forEach((handler: Handler) => handler(...args));
+      _events.get(type).forEach((handler: Handler) => {
+        handler(...args);
+      });
     }
     return this;
   }

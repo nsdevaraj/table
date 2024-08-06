@@ -60,7 +60,7 @@ import TextEditor from './editor/text';
 
 import FParser from './fParser';
 
-export type TableRendererOptions = {
+export interface TableRendererOptions {
   style?: Partial<Style>;
   headerStyle?: Partial<Style>;
   rowHeader?: Partial<RowHeader>;
@@ -68,16 +68,16 @@ export type TableRendererOptions = {
   gridline?: Partial<Gridline>;
   headerGridline?: Partial<Gridline>;
   freeGridline?: Partial<Gridline>;
-};
+}
 
-export type TableDataOptions = {
+export interface TableDataOptions {
   rows?: number;
   cols?: number;
   rowHeight?: number;
   colWidth?: number;
-};
+}
 
-export type TableOptions = {
+export interface TableOptions {
   minRowHeight?: number;
   minColWidth?: number;
   scrollable?: boolean;
@@ -87,7 +87,7 @@ export type TableOptions = {
   copyable?: boolean;
   data?: TableDataOptions;
   renderer?: TableRendererOptions;
-};
+}
 
 export type MoveDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -101,9 +101,9 @@ export default class Table {
 
   _editable = false;
 
-  _minRowHeight: number = 25;
+  _minRowHeight = 25;
 
-  _minColWidth: number = 60;
+  _minColWidth = 60;
 
   _width: () => number;
 
@@ -135,7 +135,7 @@ export default class Table {
   _editors = new Map();
 
   _selector: Selector | null = null;
-  _restrictFillRange: boolean = false;
+  _restrictFillRange = false;
   _overlayer: Overlayer;
 
   _canvas: HElement;
@@ -164,12 +164,8 @@ export default class Table {
     });
     this._data = defaultData();
 
-    this._cdata = Array()
-      .fill(null)
-      .map(() => Array().fill(0));
-    this._formulas = Array()
-      .fill(null)
-      .map(() => Array().fill(null));
+    this._cdata = [].fill(null).map(() => [].fill(0));
+    this._formulas = [].fill(null).map(() => [].fill(null));
     this._formulaParser = new FParser(this);
     // update default data
     if (options) {
@@ -219,7 +215,7 @@ export default class Table {
       this._editable = true;
     }
 
-    this._copyable = options?.copyable || false;
+    this._copyable = options?.copyable ?? false;
 
     this._editor = new TextEditor();
 
@@ -318,7 +314,9 @@ export default class Table {
     else {
       const { _selector } = this;
       if (_selector) {
-        _selector._ranges.forEach((it) => merge(this._data, it.toString()));
+        _selector._ranges.forEach((it) => {
+          merge(this._data, it.toString());
+        });
       }
     }
     return this;
@@ -332,7 +330,9 @@ export default class Table {
     else {
       const { _selector } = this;
       if (_selector) {
-        _selector._ranges.forEach((it) => unmerge(this._data, it.toString()));
+        _selector._ranges.forEach((it) => {
+          unmerge(this._data, it.toString());
+        });
       }
     }
     return this;

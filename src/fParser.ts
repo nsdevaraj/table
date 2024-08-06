@@ -43,8 +43,8 @@ class FParser {
   private tokenize(expression: string): string[] {
     return (
       expression.match(
-        /([A-Z]+[0-9]+(?::[A-Z]+[0-9]+)?|\d+|\+|\-|\*|\/|\(|\)|,|:|[A-Z]+(?=\())/g
-      ) || []
+        /([A-Z]+[0-9]+(?::[A-Z]+[0-9]+)?|\d+|\+|-|\*|\/|\(|\)|,|:|[A-Z]+(?=\())/g
+      ) ?? []
     );
   }
 
@@ -72,7 +72,7 @@ class FParser {
         while (
           stack.length &&
           precedence[stack[stack.length - 1] as Operator | ':'] >=
-            precedence[token as Operator | ':']
+          precedence[token as Operator | ':']
         ) {
           output.push(stack.pop()!);
         }
@@ -126,7 +126,7 @@ class FParser {
         while (
           stack.length &&
           (typeof stack[stack.length - 1] === 'number' ||
-            Array.isArray(stack[stack.length - 1]))
+          Array.isArray(stack[stack.length - 1]))
         ) {
           const value = stack.pop()!;
           if (Array.isArray(value)) {
@@ -150,17 +150,17 @@ class FParser {
   }
 
   private getCellValue(cellRef: string): number {
-    const col = this.letterToColumn(cellRef.match(/^[A-Z]+/)![0]);
-    const row = parseInt(cellRef.match(/[0-9]+$/)![0]) - 1;
+    const col = this.letterToColumn(cellRef.match(/^[A-Z]+/)?.[0]);
+    const row = parseInt(cellRef.match(/[0-9]+$/)?.[0]) - 1;
     return this.table.getCell(row, col);
   }
 
   private getCellRangeValues(range: string): number[] {
     const [start, end] = range.split(':');
-    const startCol = this.letterToColumn(start.match(/^[A-Z]+/)![0]);
-    const startRow = parseInt(start.match(/[0-9]+$/)![0]) - 1;
-    const endCol = this.letterToColumn(end.match(/^[A-Z]+/)![0]);
-    const endRow = parseInt(end.match(/[0-9]+$/)![0]) - 1;
+    const startCol = this.letterToColumn(start.match(/^[A-Z]+/)?.[0]);
+    const startRow = parseInt(start.match(/[0-9]+$/)?.[0]) - 1;
+    const endCol = this.letterToColumn(end.match(/^[A-Z]+/)?.[0]);
+    const endRow = parseInt(end.match(/[0-9]+$/)?.[0]) - 1;
 
     const values: number[] = [];
     for (let row = startRow; row <= endRow; row++) {
