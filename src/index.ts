@@ -164,8 +164,12 @@ export default class Table {
     });
     this._data = defaultData();
 
-    this._cdata = [].fill(null).map(() => [].fill(0));
-    this._formulas = [].fill(null).map(() => [].fill(null));
+    this._cdata = Array()
+      .fill(null)
+      .map(() => Array().fill(0));
+    this._formulas = Array()
+      .fill(null)
+      .map(() => Array().fill(null));
     this._formulaParser = new FParser(this);
     // update default data
     if (options) {

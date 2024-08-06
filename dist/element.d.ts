@@ -1,15 +1,15 @@
-export declare type CSSAttrs = {
+export interface CSSAttrs {
     left?: number;
     top?: number;
     width?: number;
     height?: number;
     position?: string;
     [property: string]: any;
-};
+}
 export default class HElement {
     _: HTMLElement;
     _data: Map<any, any>;
-    constructor(tag: string | Node, className?: string | string[] | Object);
+    constructor(tag: string | Node, className?: string | string[] | object);
     element(): any;
     data(key: string): any;
     data(key: string, value: any): HElement;
@@ -45,5 +45,5 @@ export default class HElement {
     cloneNode(): Node;
     get firstChild(): HElement | null;
 }
-export declare function h(tag: string | HTMLElement, className?: string | string[] | Object): HElement;
+export declare function h(tag: string | HTMLElement, className?: string | string[] | object): HElement;
 export declare function textWidth(text: string, fontSize: string, fontFamily: string): number;
