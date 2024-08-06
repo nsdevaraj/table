@@ -9,7 +9,7 @@ export default class TextEditor extends Editor {
   _text: HElement = h('textarea', '');
   _textMeasure: HElement = h('div', 'measure');
 
-  _editing = false;
+  _editing: boolean = false;
 
   constructor() {
     super(`${stylePrefix}-editor`);
