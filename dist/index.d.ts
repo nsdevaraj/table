@@ -59,6 +59,8 @@ export default class Table {
     _editors: Map<any, any>;
     _selector: Selector | null;
     _restrictFillRange: boolean;
+    _restrictMultiLevelSelection: boolean;
+    _restrictEmptyCellSelection: boolean;
     _overlayer: Overlayer;
     _canvas: HElement;
     _emitter: EventEmitter;
