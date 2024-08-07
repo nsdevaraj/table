@@ -17,13 +17,12 @@ export default class Editor {
   _target: HElement | null = null;
   _rect: Rect | null = null;
   _value: DataCell;
-  _visible: boolean = false;
+  _visible = false;
 
   _moveChanger: MoveChanger = () => {};
   _changer: Changer = () => {};
 
-  constructor(cssClass: String) {
-    this._ = h('div', cssClass);
+  constructor(cssClass: string) {    this._ = h('div', cssClass);
   }
 
   get visible() {

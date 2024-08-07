@@ -6,6 +6,6 @@ export declare class EventEmitter {
     _events: Map<any, any>;
     on(type: string, handler: Handler): this;
     off(type: string, handler?: Handler): this;
-    emit(type: String, ...args: any): this;
+    emit(type: string, ...args: any): this;
 }
 export {};
