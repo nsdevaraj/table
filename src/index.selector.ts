@@ -1,6 +1,6 @@
 import Table, { MoveDirection } from '.';
 import { borderWidth } from './config';
-import { Rect, Range, Area } from '@wolf-table/table-renderer';
+import { Rect, Range, Area } from '@lumel/table-renderer';
 import { DataCell, rangeUnoinMerges, stepColIndex, stepRowIndex } from './data';
 import Selector from './selector';
 import scrollbar from './index.scrollbar';

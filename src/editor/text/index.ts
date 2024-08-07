@@ -1,6 +1,6 @@
 import HElement, { h } from '../../element';
 import { borderWidth, stylePrefix } from '../../config';
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import Editor from '..';
 import { MoveDirection } from '../..';
 import { cellValueString, DataCell } from '../../data';

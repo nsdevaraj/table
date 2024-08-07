@@ -1,4 +1,4 @@
-import { AreaCell } from '@wolf-table/table-renderer';
+import { AreaCell } from '@lumel/table-renderer';
 import HElement from '../element';
 export declare type ResizerType = 'row' | 'col';
 export default class Resizer {

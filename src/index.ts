@@ -18,7 +18,7 @@ import TableRenderer, {
   Gridline,
   ViewportCell,
   Cell,
-} from '@wolf-table/table-renderer';
+} from '@lumel/table-renderer';
 import {
   defaultData,
   TableData,
@@ -134,12 +134,11 @@ export default class Table {
   _editor: Editor | null = null;
   _editors = new Map();
 
-  _selector: Selector | null = null; 
+  _selector: Selector | null = null;
   _restrictFillRange: boolean = false;
   _restrictMultiLevelSelection: boolean = false;
   _restrictEmptyCellSelection: boolean = false;
 
- 
   _overlayer: Overlayer;
 
   _canvas: HElement;

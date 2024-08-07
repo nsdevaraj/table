@@ -1,4 +1,4 @@
-import { Range } from '@wolf-table/table-renderer';
+import { Range } from '@lumel/table-renderer';
 import { Cells, TableData } from '.';
 export interface CopyData {
     range: Range;
