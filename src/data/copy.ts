@@ -1,8 +1,16 @@
-import { Range, expr2expr } from '@wolf-table/table-renderer';
+import { Range, expr2expr } from '@lumel/table-renderer';
 import { Cells, TableData, addStyle, IndexDataCell, cellValueString } from '.';
 
-export interface CopyData { range: Range; cells: Cells; data: TableData }
-export interface CopyCells { range: Range; cells: Cells; data: TableData }
+export interface CopyData {
+  range: Range;
+  cells: Cells;
+  data: TableData;
+}
+export interface CopyCells {
+  range: Range;
+  cells: Cells;
+  data: TableData;
+}
 
 export function copy(
   from: CopyCells | null,

@@ -1,5 +1,5 @@
 import HElement from '../../element';
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import Editor from '..';
 import { DataCell } from '../../data';
 export default class TextEditor extends Editor {

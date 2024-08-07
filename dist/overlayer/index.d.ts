@@ -1,4 +1,4 @@
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import HElement from '../element';
 export default class Overlayer {
     _areas: HElement[];

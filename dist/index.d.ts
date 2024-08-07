@@ -5,7 +5,7 @@ import Resizer from './resizer';
 import Selector from './selector';
 import Overlayer from './overlayer';
 import Editor from './editor';
-import TableRenderer, { Style, ColHeader, RowHeader, Range, Rect, Border, Formatter, Gridline, ViewportCell } from '@wolf-table/table-renderer';
+import TableRenderer, { Style, ColHeader, RowHeader, Range, Rect, Border, Formatter, Gridline, ViewportCell } from '@lumel/table-renderer';
 import { TableData, Cells, FormulaParser, DataCell, DataRow, DataCol, DataCellValue } from './data';
 import { EventEmitter } from './event';
 import FParser from './fParser';

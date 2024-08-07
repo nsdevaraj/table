@@ -1,5 +1,5 @@
 import Table from '.';
-import { Range, ViewportCell } from '@wolf-table/table-renderer';
+import { Range, ViewportCell } from '@lumel/table-renderer';
 import { DataCellValue } from './data';
 import selector from './index.selector';
 import editor from './index.editor';

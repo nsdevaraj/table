@@ -1,4 +1,4 @@
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import Editor from '..';
 import HElement from '../../element';
 declare type Position = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';

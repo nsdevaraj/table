@@ -1,6 +1,6 @@
 import HElement, { h } from '../element';
 import { borderWidth } from '../config';
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import { DataCell } from '../data';
 
 type MoveDirection = 'up' | 'down' | 'left' | 'right' | 'none';
@@ -22,7 +22,8 @@ export default class Editor {
   _moveChanger: MoveChanger = () => {};
   _changer: Changer = () => {};
 
-  constructor(cssClass: string) {    this._ = h('div', cssClass);
+  constructor(cssClass: string) {
+    this._ = h('div', cssClass);
   }
 
   get visible() {

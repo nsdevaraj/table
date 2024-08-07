@@ -1,5 +1,5 @@
 import { TableData } from '.';
-import { Border, Range } from '@wolf-table/table-renderer';
+import { Border, Range } from '@lumel/table-renderer';
 
 export function addBorder(t: TableData, value: Border) {
   if (!t.borders) t.borders = [];

@@ -1,4 +1,4 @@
-import { Range, Rect } from '@wolf-table/table-renderer';
+import { Range, Rect } from '@lumel/table-renderer';
 import HElement from '../element';
 import { SelectedCell } from '../index.selector';
 declare class SelectArea {

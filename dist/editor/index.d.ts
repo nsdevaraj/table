@@ -1,5 +1,5 @@
 import HElement from '../element';
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import { DataCell } from '../data';
 declare type MoveDirection = 'up' | 'down' | 'left' | 'right' | 'none';
 declare type MoveChanger = (direction: MoveDirection) => void;

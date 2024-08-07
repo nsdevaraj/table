@@ -1,5 +1,5 @@
 import Table, { MoveDirection } from '.';
-import { Range } from '@wolf-table/table-renderer';
+import { Range } from '@lumel/table-renderer';
 import { DataCell } from './data';
 import Selector from './selector';
 export interface SelectedCell {
