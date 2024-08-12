@@ -20,17 +20,29 @@ export type CSSAttrs = {
 };
 
 export default class HElement {
-  _: HTMLElement;
+  _: HTMLElement | SVGElement;
   _data = new Map();
 
   constructor(tag: string | Node, className?: string | string[] | Object) {
-    this._ =
-      tag instanceof Node ? <HTMLElement>tag : document.createElement(tag);
+    let sortedTag;
+    if (typeof tag === 'string') {
+      const isSvgTag = ['svg', 'path'].includes(tag as string);
+      if (isSvgTag) {
+        sortedTag = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          tag as string
+        );
+      } else {
+        sortedTag = document.createElement(tag as string);
+      }
+    }
+    this._ = tag instanceof Node ? <HTMLElement>tag : (sortedTag as any);
+
     if (className) {
       if (typeof className === 'string') {
-        this._.className = className;
+        (this._ as HTMLElement).className = className;
       } else if (Array.isArray(className)) {
-        this._.className = className.join(' ');
+        (this._ as HTMLElement).className = className.join(' ');
       } else {
         for (let [key, value] of Object.entries(className)) {
           if (value) this._.classList.add(key);
@@ -131,11 +143,12 @@ export default class HElement {
 
   offset() {
     const { _ } = this;
+    const element = _ as HTMLElement;
     return {
-      x: _.offsetLeft,
-      y: _.offsetTop,
-      width: _.offsetWidth,
-      height: _.offsetHeight,
+      x: element.offsetLeft,
+      y: element.offsetTop,
+      width: element.offsetWidth,
+      height: element.offsetHeight,
     };
   }
 

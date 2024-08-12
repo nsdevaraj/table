@@ -2,15 +2,27 @@ import Table from '.';
 import selector from './index.selector';
 import { DataCell } from './data';
 import Editor from './editor';
+import Selector from './selector';
+import { Range } from '@wolf-table/table-renderer';
 
 function get(t: Table, cell: DataCell) {
   let type = 'text';
   if (cell instanceof Object && cell.type) type = cell.type;
   const { _editors } = t;
   const editor: Editor = _editors.get(type);
+  const { _focusRange } = t._selector as Selector;
+  const { startCol, startRow } = _focusRange as Range;
   editor.changer((value) => {
-    if (value !== null) {
-      selector.setCellValue(t, value);
+    t._handleEditorValueChange(startRow, startCol, value);
+
+    let sortedValue;
+    if (typeof value === 'string' && value.startsWith('=') && t._formulaBar) {
+      sortedValue = t._formulaParser.parse(value);
+    } else {
+      sortedValue = value;
+    }
+    if (sortedValue !== null) {
+      selector.setCellValue(t, sortedValue);
     }
   });
   editor.moveChanger((direction) => {

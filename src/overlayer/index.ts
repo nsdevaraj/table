@@ -1,6 +1,7 @@
 import { Rect } from '@wolf-table/table-renderer';
 import { stylePrefix } from '../config';
 import HElement, { h } from '../element';
+import { INTEND_SPACING } from '../resizer';
 
 function hOverlayer() {
   return h('div', `${stylePrefix}-overlayer-area`);
@@ -28,7 +29,8 @@ export default class Overlayer {
     if (rect) {
       this._areaRects[index] = rect;
       const { x, y, height, width } = rect;
-      this._areas[index].css({ left: x, top: y, width, height });
+      const y1 = y + INTEND_SPACING;
+      this._areas[index].css({ left: x, top: y1, width, height });
       return this;
     }
     return this._areas[index];
@@ -39,7 +41,8 @@ export default class Overlayer {
   headerArea(index: number, rect?: Rect): any {
     if (rect) {
       const { x, y, height, width } = rect;
-      this._headerAreas[index].css({ left: x, top: y, width, height });
+      const y1 = y + INTEND_SPACING;
+      this._headerAreas[index].css({ left: x, top: y1, width, height });
     }
     return this._headerAreas[index];
   }
