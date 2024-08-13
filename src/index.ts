@@ -18,7 +18,7 @@ import TableRenderer, {
   expr2xy,
   Gridline,
   ViewportCell,
-} from '@wolf-table/table-renderer';
+} from '@lumel/table-renderer';
 import {
   defaultData,
   TableData,
