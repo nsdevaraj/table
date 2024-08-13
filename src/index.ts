@@ -352,8 +352,10 @@ export default class Table {
         const formula: string = formulaBar.value() || '';
         this._formulas[startRow][startCol] = formula;
         const result = this._formulaParser.parse(formula);
-        this._cells.set(startRow, startCol, result);
-        this.render();
+        selector.setCellValue(this, result);
+        if (this._editor) {
+          this._editor.value(result);
+        }
       }
     }
   }
