@@ -18,6 +18,7 @@ export default class Editor {
   _rect: Rect | null = null;
   _value: DataCell;
   _visible = false;
+  _currentCell: Cell | null = null;
 
   _moveChanger: MoveChanger = () => {};
   _changer: Changer = () => {};
@@ -37,6 +38,7 @@ export default class Editor {
   }
 
   cellIndex(r: number, c: number) {
+    this._currentCell = { row: r, col: c };
     return this;
   }
 
@@ -73,6 +75,7 @@ export default class Editor {
 
   hide() {
     this._visible = false;
+    this._currentCell = null;
     this.value('');
     this._.hide();
     return this;
@@ -86,5 +89,12 @@ export default class Editor {
   changer(value: Changer) {
     this._changer = value;
     return this;
+  }
+  isEditing(): boolean {
+    return this._visible;
+  }
+
+  editingCell(): Cell | null {
+    return this._currentCell;
   }
 }

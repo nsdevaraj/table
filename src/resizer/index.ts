@@ -4,6 +4,7 @@ import HElement, { h } from '../element';
 import { bind, unbind } from '../event';
 
 export type ResizerType = 'row' | 'col';
+export const INTEND_SPACING = 27;
 
 export default class Resizer {
   _: HElement;
@@ -42,9 +43,9 @@ export default class Resizer {
     this._cell = cell;
     const { _type } = this;
     const { x, y, width, height } = cell;
-
+    const y1 = y + INTEND_SPACING;
     this._.css('left', `${_type === 'row' ? x : x + width - 5}px`)
-      .css('top', `${_type === 'row' ? y + height - 5 : y}px`)
+      .css('top', `${_type === 'row' ? y1 + height - 5 : y1}px`)
       .show();
 
     const key = _type === 'row' ? 'width' : 'height';

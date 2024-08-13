@@ -6,6 +6,7 @@ import Resizer from './resizer';
 import Selector from './selector';
 import Overlayer from './overlayer';
 import Editor from './editor';
+import formulaContainer from './index.formulaContainer';
 import TableRenderer, {
   Style,
   ColHeader,
@@ -17,7 +18,6 @@ import TableRenderer, {
   expr2xy,
   Gridline,
   ViewportCell,
-  Cell,
 } from '@lumel/table-renderer';
 import {
   defaultData,
@@ -60,7 +60,7 @@ import TextEditor from './editor/text';
 
 import FParser from './fParser';
 
-export interface TableRendererOptions {
+export type TableRendererOptions = {
   style?: Partial<Style>;
   headerStyle?: Partial<Style>;
   rowHeader?: Partial<RowHeader>;
@@ -68,16 +68,16 @@ export interface TableRendererOptions {
   gridline?: Partial<Gridline>;
   headerGridline?: Partial<Gridline>;
   freeGridline?: Partial<Gridline>;
-}
+};
 
-export interface TableDataOptions {
+export type TableDataOptions = {
   rows?: number;
   cols?: number;
   rowHeight?: number;
   colWidth?: number;
-}
+};
 
-export interface TableOptions {
+export type TableOptions = {
   minRowHeight?: number;
   minColWidth?: number;
   scrollable?: boolean;
@@ -87,7 +87,7 @@ export interface TableOptions {
   copyable?: boolean;
   data?: TableDataOptions;
   renderer?: TableRendererOptions;
-}
+};
 
 export type MoveDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -101,9 +101,9 @@ export default class Table {
 
   _editable = false;
 
-  _minRowHeight = 25;
+  _minRowHeight: number = 25;
 
-  _minColWidth = 60;
+  _minColWidth: number = 60;
 
   _width: () => number;
 
@@ -120,8 +120,6 @@ export default class Table {
 
   _cells = new Cells();
 
-  _tooltip: TableTooltip;
-
   // scrollbar
   _vScrollbar: Scrollbar | null = null;
   _hScrollbar: Scrollbar | null = null;
@@ -135,10 +133,6 @@ export default class Table {
   _editors = new Map();
 
   _selector: Selector | null = null;
-  _restrictFillRange: boolean = false;
-  _restrictMultiLevelSelection: boolean = false;
-  _restrictEmptyCellSelection: boolean = false;
-
   _overlayer: Overlayer;
 
   _canvas: HElement;
@@ -149,6 +143,15 @@ export default class Table {
   _cdata: number[][];
   _formulas: (string | null)[][];
   _formulaParser: FParser;
+  _selectedCells: { row: number; col: number }[];
+  _isFormulaEditing: boolean = false;
+  _formulaEditingCell: { row: number; col: number } | null = null;
+  _defaultElement: HElement;
+  _formulaBar: HElement | null;
+  _formulaBarHeight: number = 15; // Height of the formula bar
+  _svgApplyRender: HElement;
+  _svgCancelRender: HElement;
+  _svgFormulaIcon: HElement;
 
   constructor(
     element: HTMLElement | string,
@@ -173,7 +176,15 @@ export default class Table {
     this._formulas = Array()
       .fill(null)
       .map(() => Array().fill(null));
+    this._selectedCells = [];
     this._formulaParser = new FParser(this);
+    this._isFormulaEditing = false;
+    this._defaultElement = formulaContainer._createEmptyBar();
+    this._formulaBar = null;
+    this._svgApplyRender = formulaContainer._renderSvgApplyElement();
+    this._svgCancelRender = formulaContainer._renderSvgCancelElement();
+    this._svgFormulaIcon = formulaContainer._renderFormulaIconSvg();
+    // this._formBar = this._renderFormulaBar();
     // update default data
     if (options) {
       const { minColWidth, minRowHeight, renderer, data } = options;
@@ -198,9 +209,14 @@ export default class Table {
     // tabIndex for trigger keydown event
     this._canvas = h(canvasElement).attr('tabIndex', '1');
     this._container.append(canvasElement);
-    this._renderer = new TableRenderer(canvasElement, width(), height());
+    this._canvas.before(this._defaultElement);
+
+    this._renderer = new TableRenderer(
+      canvasElement,
+      width(),
+      height() - this._formulaBarHeight
+    );
     this._overlayer = new Overlayer(this._container);
-    this._tooltip = new TableTooltip(this._container);
 
     // resize rect of content
     resizeContentRect(this);
@@ -222,7 +238,27 @@ export default class Table {
       this._editable = true;
     }
 
-    this._copyable = options?.copyable ?? false;
+    this._svgApplyRender.on('click', (e) => {
+      const formulaBar = this._formulaBar as HElement;
+      const formula = formulaBar.value();
+      if (formula.startsWith('=')) {
+        this.applyFormula();
+      }
+    });
+    this._svgCancelRender.on('click', (e) => {
+      if (this._formulaBar) {
+        const formulaBarValue = this._formulaBar.value();
+        if (this._formulaEditingCell && formulaBarValue) {
+          if (this._formulaBar.focus()) this._formulaBar.value('');
+          const { row, col } = this._formulaEditingCell;
+          this._formulas[row][col] = '';
+          this._cells.set(row, col, '');
+          this.render();
+        }
+      }
+    });
+
+    this._copyable = options?.copyable || false;
 
     this._editor = new TextEditor();
 
@@ -232,33 +268,88 @@ export default class Table {
     initEvents(this);
 
     this.onEditorValueChange((cell, value: DataCell) => {
-      // assign the cell formula
       if (typeof value === 'string' && value.startsWith('=')) {
-        this.setCellFormula(cell.row, cell.col, value);
+        if (!this._formulaBar) {
+          this._formulaBar = formulaContainer._createFormulaBar(
+            this._formulaBarHeight
+          );
+          this.onAddingFormulaBar(this._formulaBar);
+          this._formulaBar.focus();
+          this._formulaBar.value(value);
+          this._isFormulaEditing = true;
+          this._formulaEditingCell = { row: cell.row, col: cell.col };
+        }
+      } else {
+        if (this._formulaBar) {
+          this.onRemovingFormulaBar();
+        }
       }
-      this.recalculate();
-      this.render();
     });
 
+    this.handleCellClick((cell: ViewportCell, evt: MouseEvent) => {
+      if (this._isFormulaEditing) {
+        // const cellRef = `${this.columnToLetter(cell.col)}${cell.row + 1}`;
+      } else {
+        this._emitter.emit('click', cell, evt);
+      }
+    });
+  }
+  onAddingFormulaBar(formulaBarContainer: HElement) {
+    this._container.remove(this._defaultElement);
+    this._canvas.before(this._svgFormulaIcon);
+    this._svgFormulaIcon.after(formulaBarContainer);
+    formulaBarContainer.after(this._svgApplyRender);
+    this._svgApplyRender.after(this._svgCancelRender);
+  }
+  onRemovingFormulaBar() {
+    this._container.remove(this._svgCancelRender);
+    this._container.remove(this._svgApplyRender);
+    this._container.remove(this._formulaBar as HElement);
+    this._container.remove(this._svgFormulaIcon);
+    this._formulaBar = null;
+    this._canvas.before(this._defaultElement);
+  }
+
+  handleCellClick(handler: (cell: ViewportCell, evt: MouseEvent) => void) {
+    this._emitter.on('editorValueChange', handler);
     this.onSelectValueChange((cell: ViewportCell) => {
+      const formulaBar = this._formulaBar as HElement;
       const formula = this.getCellFormula(cell.row, cell.col);
       if (formula) {
-        this._tooltip.show(cell, formula);
-      } else {
-        this._tooltip.hide();
-      }
-    });
+        if (!formulaBar) {
+          this._formulaBar = formulaContainer._createFormulaBar(
+            this._formulaBarHeight
+          );
+          this.onAddingFormulaBar(this._formulaBar);
 
-    this.onKeyDown((row, col, cell) => {
-      const formula = this.getCellFormula(row, col);
-      console.log('key', row, col, cell);
-      console.log('formula', formula);
-      if (formula) {
-        this._tooltip.show(cell, formula);
+          this._formulaBar.value(formula || '');
+        } else {
+          formulaBar.value(formula || '');
+        }
+        this._formulaEditingCell = { row: cell.row, col: cell.col };
+        this._isFormulaEditing = true;
       } else {
-        this._tooltip.hide();
+        if (this._formulaBar) {
+          this.onRemovingFormulaBar();
+        }
       }
     });
+  }
+
+  // on edit and click apply button formula bar
+  applyFormula() {
+    if (this._selector) {
+      const { _focusRange } = this._selector;
+      if (_focusRange) {
+        const { startCol, startRow } = _focusRange;
+        const formulaBar = this._formulaBar as HElement;
+        const formula: string = formulaBar.value() || '';
+        this._formulas[startRow][startCol] = formula;
+        const result = this._formulaParser.parse(formula);
+        this._cells.set(startRow, startCol, result);
+        this.render();
+      }
+    }
   }
 
   onSelectValueChange(handler: (cell: ViewportCell) => void) {
@@ -273,9 +364,8 @@ export default class Table {
     return this;
   }
 
-  onKeyDown(handler: (row: number, col: number, cell: ViewportCell) => void) {
-    this._emitter.on('key', handler);
-    return this;
+  _handleEditorValueChange(row: number, col: number, value: DataCell) {
+    this._emitter.emit('editorValueChange', { row, col }, value);
   }
 
   contentRect() {
@@ -321,9 +411,7 @@ export default class Table {
     else {
       const { _selector } = this;
       if (_selector) {
-        _selector._ranges.forEach((it) => {
-          merge(this._data, it.toString());
-        });
+        _selector._ranges.forEach((it) => merge(this._data, it.toString()));
       }
     }
     return this;
@@ -337,9 +425,7 @@ export default class Table {
     else {
       const { _selector } = this;
       if (_selector) {
-        _selector._ranges.forEach((it) => {
-          unmerge(this._data, it.toString());
-        });
+        _selector._ranges.forEach((it) => unmerge(this._data, it.toString()));
       }
     }
     return this;
@@ -464,12 +550,15 @@ export default class Table {
         this._cdata[row][col] = value;
       }
       // Trigger _handleEditorValueChange if the value has changed
-      if (oldValue !== value) {
-        this._emitter.emit('editorValueChange', { row, col }, value);
-      }
       return this;
     }
     const v = _cells.get(row, col);
+
+    // If in formula editing mode, return the formula instead of the calculated value
+    if (this._isFormulaEditing && this._formulas[row][col]) {
+      //return this._formulas[row][col];
+    }
+
     return v != null ? v[2] : v;
   }
 
@@ -532,6 +621,20 @@ export default class Table {
     } else {
       return this._data;
     }
+  }
+
+  startFormulaEditing(row: number, col: number) {
+    this._isFormulaEditing = true;
+    this._formulaEditingCell = { row, col };
+    const currentFormula = this._formulas[row][col] || '=';
+    const formulaBar = this._formulaBar as HElement;
+    formulaBar.value(currentFormula);
+    //this._formulaBar.focus();
+  }
+
+  endFormulaEditing() {
+    this._isFormulaEditing = false;
+    this._formulaEditingCell = null;
   }
 
   bloatCellData(data?: TableData) {
@@ -664,7 +767,6 @@ export default class Table {
   setCellFormula(row: number, col: number, formula: string): void {
     this._formulas[row][col] = formula;
     const result = this._formulaParser.parse(formula);
-
     this._cdata[row][col] = result;
     this.cell(row, col, result);
   }
@@ -678,6 +780,45 @@ export default class Table {
         }
       }
     }
+  }
+
+  selectCell(row: number, col: number): void {
+    this._selectedCells.push({ row, col });
+  }
+
+  clearSelection(): void {
+    this._selectedCells = [];
+  }
+
+  createFormulaFromSelection(
+    targetRow: number,
+    targetCol: number,
+    operator: '+' | '-' | '*' | '/'
+  ): void {
+    if (this._selectedCells.length < 2) {
+      throw new Error(
+        'At least two cells must be selected to create a formula'
+      );
+    }
+
+    const cellRefs = this._selectedCells.map(
+      (cell) => this.columnToLetter(cell.col) + (cell.row + 1)
+    );
+    const formula = '=' + cellRefs.join(operator);
+
+    this.setCellFormula(targetRow, targetCol, formula);
+    this.clearSelection();
+  }
+
+  columnToLetter(column: number): string {
+    let temp: number;
+    let letter = '';
+    while (column >= 0) {
+      temp = column % 26;
+      letter = String.fromCharCode(temp + 65) + letter;
+      column = Math.floor(column / 26) - 1;
+    }
+    return letter;
   }
 
   /**
@@ -707,44 +848,6 @@ function resizeContentRect(t: Table) {
     width: colsWidth(t._data),
     height: rowsHeight(t._data),
   };
-}
-
-export class TableTooltip {
-  private _container: HElement;
-  private _tooltip: HElement;
-
-  constructor(container: HElement) {
-    this._container = container;
-    this._tooltip = this._createTooltip();
-    this._container.append(this._tooltip);
-  }
-
-  private _createTooltip(): HElement {
-    return h('div').css({
-      position: 'absolute',
-      color: 'grey',
-      padding: '5px',
-      borderRadius: '3px',
-      fontSize: '8px',
-      zIndex: '1000',
-      display: 'none',
-      'background-color': 'lightblue',
-    });
-  }
-
-  show(cell: ViewportCell, formula: string): void {
-    const { x, y, width } = cell;
-    this._tooltip.html(formula).css({
-      left: x + 25,
-      top: y - 25,
-      maxWidth: width,
-      display: 'block',
-    });
-  }
-
-  hide(): void {
-    this._tooltip.css('display', 'none');
-  }
 }
 
 declare global {
