@@ -7,9 +7,9 @@ export interface CSSAttrs {
     [property: string]: any;
 }
 export default class HElement {
-    _: HTMLElement;
+    _: HTMLElement | SVGElement;
     _data: Map<any, any>;
-    constructor(tag: string | Node, className?: string | string[] | object);
+    constructor(tag: string | Node, className?: string | string[] | Object);
     element(): any;
     data(key: string): any;
     data(key: string, value: any): HElement;

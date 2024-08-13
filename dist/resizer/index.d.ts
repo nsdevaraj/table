@@ -1,6 +1,7 @@
 import { AreaCell } from '@lumel/table-renderer';
 import HElement from '../element';
 export declare type ResizerType = 'row' | 'col';
+export declare const INTEND_SPACING = 27;
 export default class Resizer {
     _: HElement;
     _hover: HElement;

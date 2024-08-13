@@ -9,7 +9,7 @@ import TableRenderer, { Style, ColHeader, RowHeader, Range, Rect, Border, Format
 import { TableData, Cells, FormulaParser, DataCell, DataRow, DataCol, DataCellValue } from './data';
 import { EventEmitter } from './event';
 import FParser from './fParser';
-export interface TableRendererOptions {
+export declare type TableRendererOptions = {
     style?: Partial<Style>;
     headerStyle?: Partial<Style>;
     rowHeader?: Partial<RowHeader>;
@@ -17,14 +17,14 @@ export interface TableRendererOptions {
     gridline?: Partial<Gridline>;
     headerGridline?: Partial<Gridline>;
     freeGridline?: Partial<Gridline>;
-}
-export interface TableDataOptions {
+};
+export declare type TableDataOptions = {
     rows?: number;
     cols?: number;
     rowHeight?: number;
     colWidth?: number;
-}
-export interface TableOptions {
+};
+export declare type TableOptions = {
     minRowHeight?: number;
     minColWidth?: number;
     scrollable?: boolean;
@@ -34,13 +34,16 @@ export interface TableOptions {
     copyable?: boolean;
     data?: TableDataOptions;
     renderer?: TableRendererOptions;
-}
+};
 export declare type MoveDirection = 'up' | 'down' | 'left' | 'right';
 export { HElement, h };
 export default class Table {
     _rendererOptions: TableRendererOptions;
     _copyable: boolean;
     _editable: boolean;
+    _restrictEmptyCellSelection: boolean;
+    _restrictFillRange: boolean;
+    _restrictMultiLevelSelection: boolean;
     _minRowHeight: number;
     _minColWidth: number;
     _width: () => number;
@@ -50,7 +53,6 @@ export default class Table {
     _data: TableData;
     _renderer: TableRenderer;
     _cells: Cells;
-    _tooltip: TableTooltip;
     _vScrollbar: Scrollbar | null;
     _hScrollbar: Scrollbar | null;
     _rowResizer: Resizer | null;
@@ -58,22 +60,38 @@ export default class Table {
     _editor: Editor | null;
     _editors: Map<any, any>;
     _selector: Selector | null;
-    _restrictFillRange: boolean;
-    _restrictMultiLevelSelection: boolean;
-    _restrictEmptyCellSelection: boolean;
     _overlayer: Overlayer;
     _canvas: HElement;
     _emitter: EventEmitter;
     _cdata: number[][];
     _formulas: (string | null)[][];
     _formulaParser: FParser;
+    _selectedCells: {
+        row: number;
+        col: number;
+    }[];
+    _isFormulaEditing: boolean;
+    _formulaEditingCell: {
+        row: number;
+        col: number;
+    } | null;
+    _defaultElement: HElement;
+    _formulaBar: HElement | null;
+    _formulaBarHeight: number;
+    _svgApplyRender: HElement;
+    _svgCancelRender: HElement;
+    _svgFormulaIcon: HElement;
     constructor(element: HTMLElement | string, width: () => number, height: () => number, options?: TableOptions);
+    onAddingFormulaBar(formulaBarContainer: HElement): void;
+    onRemovingFormulaBar(): void;
+    handleCellClick(handler: (cell: ViewportCell, evt: MouseEvent) => void): void;
+    applyFormula(): void;
     onSelectValueChange(handler: (cell: ViewportCell) => void): this;
     onEditorValueChange(handler: (cell: {
         row: number;
         col: number;
     }, value: DataCell) => void): this;
-    onKeyDown(handler: (row: number, col: number, cell: ViewportCell) => void): this;
+    _handleEditorValueChange(row: number, col: number, value: DataCell): void;
     contentRect(): Rect;
     container(): HElement;
     resize(): void;
@@ -111,6 +129,8 @@ export default class Table {
     render(): this;
     data(): TableData;
     data(data: Partial<TableData>): Table;
+    startFormulaEditing(row: number, col: number): void;
+    endFormulaEditing(): void;
     bloatCellData(data?: TableData): void;
     /**
      * copy data to ...
@@ -137,6 +157,10 @@ export default class Table {
     getCellFormula(row: number, col: number): string | null;
     setCellFormula(row: number, col: number, formula: string): void;
     recalculate(): void;
+    selectCell(row: number, col: number): void;
+    clearSelection(): void;
+    createFormulaFromSelection(targetRow: number, targetCol: number, operator: '+' | '-' | '*' | '/'): void;
+    columnToLetter(column: number): string;
     /**
      * @param type keyof cell.type
      * @param editor
@@ -144,14 +168,6 @@ export default class Table {
      */
     addEditor(type: string, editor: Editor): this;
     static create(element: HTMLElement | string, width: () => number, height: () => number, options?: TableOptions): Table;
-}
-export declare class TableTooltip {
-    private _container;
-    private _tooltip;
-    constructor(container: HElement);
-    private _createTooltip;
-    show(cell: ViewportCell, formula: string): void;
-    hide(): void;
 }
 declare global {
     interface Window {
