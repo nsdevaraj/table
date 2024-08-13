@@ -101,6 +101,12 @@ export default class Table {
 
   _editable = false;
 
+  _restrictEmptyCellSelection = false;
+
+  _restrictFillRange = false;
+
+  _restrictMultiLevelSelection = false;
+
   _minRowHeight: number = 25;
 
   _minColWidth: number = 60;
