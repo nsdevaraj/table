@@ -1,7 +1,11 @@
 import Table, { MoveDirection } from '.';
-import { Range } from '@wolf-table/table-renderer';
+import { Range } from '@lumel/table-renderer';
 import { DataCell } from './data';
 import Selector from './selector';
+export interface SelectedCell {
+    row: number;
+    col: number;
+}
 declare function init(t: Table): void;
 declare function setCellValue(t: Table, value: DataCell): void;
 declare function addRange(t: Table, r: number, c: number, clear: boolean): void;

@@ -43,8 +43,8 @@ class FParser {
   private tokenize(expression: string): string[] {
     return (
       expression.match(
-        /([A-Z]+[0-9]+(?::[A-Z]+[0-9]+)?|\d+|\+|\-|\*|\/|\(|\)|,|:|[A-Z]+(?=\())/g
-      ) || []
+        /([A-Z]+[0-9]+(?::[A-Z]+[0-9]+)?|\d+|\+|-|\*|\/|\(|\)|,|:|[A-Z]+(?=\())/g
+      ) ?? []
     );
   }
 

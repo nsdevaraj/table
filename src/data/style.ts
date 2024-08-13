@@ -1,5 +1,5 @@
 import { TableData } from '.';
-import { Style } from '@wolf-table/table-renderer';
+import { Style } from '@lumel/table-renderer';
 import { equals } from '../helper';
 
 export function addStyle(t: TableData, value: Partial<Style>): number {
@@ -18,7 +18,7 @@ export function addStyle(t: TableData, value: Partial<Style>): number {
 export function getStyle(
   t: TableData,
   index: number,
-  withDefault: boolean = true
+  withDefault = true
 ): Partial<Style> {
   const style = t.styles[index];
   if (withDefault) {

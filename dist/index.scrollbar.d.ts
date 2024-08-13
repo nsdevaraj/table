@@ -1,5 +1,5 @@
 import Table from '.';
-import { Range } from '@wolf-table/table-renderer';
+import { Range } from '@lumel/table-renderer';
 declare function init(t: Table): void;
 declare function resize(t: Table): void;
 /**

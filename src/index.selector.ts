@@ -1,10 +1,14 @@
 import Table, { MoveDirection } from '.';
 import { borderWidth } from './config';
-import { Rect, Range, Area } from '@wolf-table/table-renderer';
+import { Rect, Range, Area } from '@lumel/table-renderer';
 import { DataCell, rangeUnoinMerges, stepColIndex, stepRowIndex } from './data';
 import Selector from './selector';
 import scrollbar from './index.scrollbar';
 import { bindMousemoveAndMouseup } from './event';
+export interface SelectedCell {
+  row: number;
+  col: number;
+}
 
 function init(t: Table) {
   t._selector = new Selector(!!t._editable).autofillTrigger((evt) => {
@@ -24,6 +28,12 @@ function init(t: Table) {
                 col - nRange.endCol,
               ];
               const index = d.indexOf(Math.max.apply(null, d));
+
+              // Check if fill range restriction is enabled
+              if (t._restrictFillRange) {
+                return;
+              }
+
               if (index === 1) {
                 nRange.startRow = nRange.endRow + 1;
                 nRange.endRow = row;
@@ -83,6 +93,7 @@ function addRange(t: Table, r: number, c: number, clear: boolean) {
 }
 
 function unionRange(t: Table, r: number, c: number) {
+  if (t._restrictMultiLevelSelection) return;
   const { _selector, _data } = t;
   if (_selector) {
     _selector.move(r, c).updateLastRange((focusRange) => {
@@ -248,7 +259,6 @@ function moveAutofill(t: Table, direction: MoveDirection) {
   }
   return false;
 }
-
 function move(
   t: Table,
   reselect: boolean,
@@ -256,7 +266,7 @@ function move(
   step?: number
 ) {
   if (moveAutofill(t, direction)) return;
-  const { _selector, _data } = t;
+  const { _selector, _data, _emitter } = t;
   const { viewport } = t._renderer;
   if (_selector && viewport) {
     const { _focusRange } = _selector;
@@ -265,6 +275,7 @@ function move(
       const { rows, cols } = _data;
 
       let [r, c] = _selector._move;
+
       if (!reselect) {
         startRow = endRow = r;
         startCol = endCol = c;
@@ -302,6 +313,24 @@ function move(
         }
       }
       _selector.placement('body');
+      // Handle keydown for the currently selected cell
+      setTimeout(() => {
+        if (t._selector) {
+          const selectedCell = t._selector._currentCell;
+          const target = t._selector._areas[0]?._._;
+          const targetRect = target?.getBoundingClientRect() as DOMRect;
+          if (viewport && selectedCell && targetRect) {
+            const v_cell = viewport.cellAt(targetRect.x, targetRect.y);
+            if (v_cell && targetRect)
+              _emitter.emit('key', selectedCell.row, selectedCell.col, {
+                ...v_cell,
+                x: targetRect?.left,
+                y: targetRect?.top - t._renderer._rowHeight / 2,
+              });
+          }
+        }
+      }, 50);
+
       scrollbar.autoMove(
         t,
         _selector.currentRange,
@@ -334,6 +363,7 @@ function bindMousemove(
       }
     };
     const moveHandler = (e: any) => {
+      if (t._restrictMultiLevelSelection) return;
       let [x1, y1] = [0, 0];
       if (e.x > 0) x1 = e.x - left;
       if (e.y > 0) y1 = e.y - top;

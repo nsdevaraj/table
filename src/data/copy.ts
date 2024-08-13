@@ -1,8 +1,16 @@
-import { Range, expr2expr } from '@wolf-table/table-renderer';
+import { Range, expr2expr } from '@lumel/table-renderer';
 import { Cells, TableData, addStyle, IndexDataCell, cellValueString } from '.';
 
-export type CopyData = { range: Range; cells: Cells; data: TableData };
-export type CopyCells = { range: Range; cells: Cells; data: TableData };
+export interface CopyData {
+  range: Range;
+  cells: Cells;
+  data: TableData;
+}
+export interface CopyCells {
+  range: Range;
+  cells: Cells;
+  data: TableData;
+}
 
 export function copy(
   from: CopyCells | null,
@@ -63,7 +71,7 @@ function copyToDataCell(
   n?: number
 ) {
   let fromCell = from.cells.get(fr, fc);
-  if (fromCell !== null && fromCell[2] !== undefined && fromCell[2] !== null) {
+  if (fromCell?.[2] !== undefined && fromCell[2] !== null) {
     let newCell = fromCell[2];
     if (newCell instanceof Object) {
       // clone cell to new cell
@@ -122,7 +130,7 @@ function subtractValue(a1: IndexDataCell | null, a2: IndexDataCell | null) {
   return 1;
 }
 
-function numberInString(str: String) {
+function numberInString(str: string) {
   let numberStr = '';
   for (let i = str.length - 1; i >= 0; i -= 1) {
     const char = str.at(i);

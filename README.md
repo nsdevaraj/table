@@ -15,8 +15,8 @@
 > A web-based(canvas) JavaScript Table
 
 ## Demo
-<a href="https://stackblitz.com/edit/wolf-table-lts2dq?file=index.ts">Open in Stackblitz</a>
-<a href="https://wolf-table-lts2dq.stackblitz.io">Preview in browser</a>
+<a href="https://stackblitz.com/edit/wolf-table-prnhfa?file=index.ts">Open in Stackblitz</a>
+<a href="https://wolf-table-prnhfa.stackblitz.io">Preview in browser</a>
 
 ## NPM
 npm install

@@ -1,4 +1,4 @@
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import { stylePrefix } from '../config';
 import HElement, { h } from '../element';
 import { INTEND_SPACING } from '../resizer';

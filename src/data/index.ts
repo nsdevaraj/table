@@ -1,4 +1,4 @@
-import { Cell, Style, Border, Row, Col } from '@wolf-table/table-renderer';
+import { Cell, Style, Border, Row, Col } from '@lumel/table-renderer';
 import Cells, { cellValue, cellValueString } from './cells';
 import { scrollx, scrolly, scrollResetRows, scrollResetCols } from './scroll';
 
@@ -10,23 +10,23 @@ import { row, rowHeight, rowsHeight, isLastRow, stepRowIndex } from './row';
 import { copy } from './copy';
 
 export type DataRow = Row;
-export type DataRows = {
+export interface DataRows {
   len: number;
   [key: number]: DataRow;
-};
+}
 
 export type DataCol = Col;
-export type DataCols = {
+export interface DataCols {
   len: number;
   [key: number]: DataCol;
-};
+}
 
 export type DataCell = Cell;
 
 export type IndexDataCell = [number, number, DataCell];
 export type DataCellValue = string | number | null | undefined;
 
-export type TableData = {
+export interface TableData {
   rows: DataRows;
   cols: DataCols;
   rowHeight: number;
@@ -38,7 +38,7 @@ export type TableData = {
   merges: string[];
   cells: IndexDataCell[];
   freeze?: string;
-};
+}
 
 export type FormulaParser = (formula: string) => string | number;
 

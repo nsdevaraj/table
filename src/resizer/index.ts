@@ -1,4 +1,4 @@
-import { AreaCell } from '@wolf-table/table-renderer';
+import { AreaCell } from '@lumel/table-renderer';
 import { stylePrefix } from '../config';
 import HElement, { h } from '../element';
 import { bind, unbind } from '../event';
@@ -30,9 +30,9 @@ export default class Resizer {
     this._change = change;
 
     this._ = h('div', `${stylePrefix}-resizer ${type}`).append(
-      (this._hover = h('div', 'hover').on('mousedown.stop', (evt) =>
-        mousedownHandler(this, evt)
-      )),
+      (this._hover = h('div', 'hover').on('mousedown.stop', (evt) => {
+        mousedownHandler(this, evt);
+      })),
       (this._line = h('div', 'line'))
     );
 

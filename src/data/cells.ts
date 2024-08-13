@@ -1,4 +1,4 @@
-import { Formatter } from '@wolf-table/table-renderer';
+import { Formatter } from '@lumel/table-renderer';
 import {
   IndexDataCell,
   DataCell,
@@ -60,7 +60,7 @@ export default class Cells {
 
   set(row: number, col: number, cell: DataCell) {
     let oldData = this.get(row, col);
-    if (oldData === null) {
+    if (!oldData) {
       if (cell !== null && cell !== undefined) {
         const index = this._.push([row, col, cell]) - 1;
         this.updateIndex(row, col, index);
@@ -132,5 +132,5 @@ export function cellValue(cell: DataCell): DataCellValue {
 
 export function cellValueString(cell: DataCell): string {
   const v = cellValue(cell);
-  return `${v !== null && v !== undefined ? v : ''}`;
+  return `${v ?? ''}`;
 }

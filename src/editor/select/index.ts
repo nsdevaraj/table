@@ -1,4 +1,4 @@
-import { Rect } from '@wolf-table/table-renderer';
+import { Rect } from '@lumel/table-renderer';
 import Editor from '..';
 import { stylePrefix } from '../../config';
 import HElement, { h } from '../../element';
@@ -9,8 +9,8 @@ type OptionsFunc = (q: string) => Promise<(string | string[])[]>;
 export default class SelectEditor extends Editor {
   _searchInput: HElement;
   _content: HElement;
-  _width: number = 300;
-  _height: number = 320;
+  _width = 300;
+  _height = 320;
   _position: Position = 'bottom-right';
   _options: OptionsFunc | null = null;
 
@@ -87,7 +87,7 @@ export default class SelectEditor extends Editor {
   }
 
   show() {
-    this.query('');
+    void this.query('');
     super.show();
     return this;
   }

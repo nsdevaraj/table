@@ -1,5 +1,5 @@
 import Table from '.';
-import { Range } from '@wolf-table/table-renderer';
+import { Range, ViewportCell } from '@lumel/table-renderer';
 import { DataCellValue } from './data';
 import selector from './index.selector';
 import editor from './index.editor';
@@ -8,11 +8,21 @@ import scrollbar from './index.scrollbar';
 export function initEvents(t: Table) {
   const { _canvas } = t;
   _canvas
-    .on('mousedown', (evt) => mousedownHandler(t, evt))
-    .on('mousemove', (evt) => mousemoveHandler(t, evt))
-    .on('keydown', (evt) => keydownHandler(t, evt))
-    .on('wheel.prevent', (evt) => wheelHandler(t, evt))
-    .on('contextmenu.prevent', (evt) => contextmenuHandler(t, evt))
+    .on('mousedown', (evt) => {
+      mousedownHandler(t, evt);
+    })
+    .on('mousemove', (evt) => {
+      mousemoveHandler(t, evt);
+    })
+    .on('keydown', (evt) => {
+      keydownHandler(t, evt);
+    })
+    .on('wheel.prevent', (evt) => {
+      wheelHandler(t, evt);
+    })
+    .on('contextmenu.prevent', (evt) => {
+      contextmenuHandler(t, evt);
+    })
     .on('dblclick.prevent', () => {
       editor.reset(t);
     });
@@ -31,6 +41,10 @@ function mousedownHandler(t: Table, evt: any) {
   if (_selector && viewport) {
     const { offsetX, offsetY, ctrlKey, metaKey, shiftKey } = evt;
     const vcell = viewport.cellAt(offsetX, offsetY);
+    const cellValue = t.cell(vcell?.row as number, vcell?.col as number);
+    if (!cellValue && t._restrictEmptyCellSelection) {
+      return;
+    }
     if (vcell) {
       _emitter.emit('click', vcell, evt);
       const { placement, row, col } = vcell;
@@ -198,6 +212,7 @@ function keydownHandler(t: Table, evt: any) {
   } else if (code === 'Escape') {
     selector.clearCopy(t);
   }
+
   if (direction) {
     selector.move(
       t,

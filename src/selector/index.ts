@@ -1,7 +1,7 @@
-import { Range, Rect } from '@wolf-table/table-renderer';
+import { Range, Rect } from '@lumel/table-renderer';
 import { stylePrefix, borderWidth } from '../config';
 import HElement, { h } from '../element';
-
+import { SelectedCell } from '../index.selector';
 class SelectArea {
   _: HElement;
   _rect: Rect | null = null;
@@ -62,7 +62,11 @@ type Placement = 'all' | 'row-header' | 'col-header' | 'body';
 export default class Selector {
   _placement: Placement = 'body';
   _editable = false;
-
+  _currentCell: SelectedCell = { row: 0, col: 0 };
+  _currentCellRect: Rect = rect2outlineRect(
+    { x: 0, y: 0, width: 0, height: 0 },
+    0
+  );
   _ranges: Range[] = [];
   _rowHeaderRanges: Range[] = [];
   _colHeaderRanges: Range[] = [];
@@ -100,11 +104,13 @@ export default class Selector {
     this._focus = [row, col];
     this._focusRange = range;
     this._move = [row, col];
+    this._currentCell = { row, col };
     return this;
   }
 
   move(row: number, col: number) {
     this._move = [row, col];
+    this._currentCell = { row, col };
     return this;
   }
 
@@ -118,7 +124,7 @@ export default class Selector {
     return this;
   }
 
-  addRange(range: Range, clear: boolean = true) {
+  addRange(range: Range, clear = true) {
     if (clear) {
       this._ranges.length = 0;
       this.clear();
@@ -140,6 +146,7 @@ export default class Selector {
     const outline = new SelectArea(`selector`, true)
       .rect(rect2outlineRect(rect, borderWidth))
       .target(target);
+    this._currentCellRect = rect;
     if (this._placement === 'body') {
       outline.append(
         h('div', 'corner')
@@ -208,7 +215,9 @@ export default class Selector {
 
   clear() {
     [this._areas, this._autofillAreas, this._copyAreas].forEach((it) => {
-      it.forEach((it1) => it1.clear());
+      it.forEach((it1) => {
+        it1.clear();
+      });
       it.length = 0;
     });
   }
