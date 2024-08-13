@@ -238,6 +238,21 @@ export default class Table {
       this._editable = true;
     }
 
+   
+    this._container.on('keydown', (event) => {
+      const { code } = event;
+      if (code === 'Enter') {
+        if (this._formulaBar) {
+          const formulaValue = this._formulaBar.value();
+          if (formulaValue.startsWith('=') && this._formulaBar.focus()) {
+            this.applyFormula();
+            this._formulaBar._.blur();
+          }
+        }
+      }
+    });
+    
+
     this._svgApplyRender.on('click', (e) => {
       const formulaBar = this._formulaBar as HElement;
       const formula = formulaBar.value();
