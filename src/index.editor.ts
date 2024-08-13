@@ -3,7 +3,7 @@ import selector from './index.selector';
 import { DataCell } from './data';
 import Editor from './editor';
 import Selector from './selector';
-import { Range } from '@wolf-table/table-renderer';
+import { Range } from '@lumel/table-renderer';
 
 function get(t: Table, cell: DataCell) {
   let type = 'text';
