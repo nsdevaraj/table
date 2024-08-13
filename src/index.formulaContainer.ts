@@ -3,8 +3,9 @@ function _createFormulaBar(formulaBarHeight: number): HElement {
   return h('input')
     .attr('type', 'text')
     .attr('placeholder', 'Enter formula')
+    .attr('id', 'formula-bar')
     .css({
-      width: 1000,
+      width: 1300,
       height: formulaBarHeight,
       padding: '5px 5px 5px 5px',
       zIndex: '10',
