@@ -69,7 +69,6 @@ function setCellValue(t: Table, value: DataCell) {
   if (_selector) {
     _selector.clearCopy();
     const { _ranges } = _selector;
-    // console.log('ranges:', _ranges, value);
     _ranges.forEach((it) => {
       if (it) {
         it.each((r, c) => {

@@ -190,7 +190,6 @@ export default class Table {
     this._svgApplyRender = formulaContainer._renderSvgApplyElement();
     this._svgCancelRender = formulaContainer._renderSvgCancelElement();
     this._svgFormulaIcon = formulaContainer._renderFormulaIconSvg();
-    // this._formBar = this._renderFormulaBar();
     // update default data
     if (options) {
       const { minColWidth, minRowHeight, renderer, data } = options;
@@ -244,6 +243,19 @@ export default class Table {
       this._editable = true;
     }
 
+    this._container.on('keydown', (event) => {
+      const { code } = event;
+      if (code === 'Enter') {
+        if (this._formulaBar) {
+          const formulaValue = this._formulaBar.value();
+          if (formulaValue.startsWith('=') && this._formulaBar.focus()) {
+            this.applyFormula();
+            this._formulaBar._.blur();
+          }
+        }
+      }
+    });
+
     this._svgApplyRender.on('click', (e) => {
       const formulaBar = this._formulaBar as HElement;
       const formula = formulaBar.value();
@@ -251,6 +263,7 @@ export default class Table {
         this.applyFormula();
       }
     });
+
     this._svgCancelRender.on('click', (e) => {
       if (this._formulaBar) {
         const formulaBarValue = this._formulaBar.value();
@@ -294,12 +307,13 @@ export default class Table {
 
     this.handleCellClick((cell: ViewportCell, evt: MouseEvent) => {
       if (this._isFormulaEditing) {
-        // const cellRef = `${this.columnToLetter(cell.col)}${cell.row + 1}`;
+        // console.log('formula editing');
       } else {
         this._emitter.emit('click', cell, evt);
       }
     });
   }
+
   onAddingFormulaBar(formulaBarContainer: HElement) {
     this._container.remove(this._defaultElement);
     this._canvas.before(this._svgFormulaIcon);
@@ -352,8 +366,10 @@ export default class Table {
         const formula: string = formulaBar.value() || '';
         this._formulas[startRow][startCol] = formula;
         const result = this._formulaParser.parse(formula);
-        this._cells.set(startRow, startCol, result);
-        this.render();
+        selector.setCellValue(this, result);
+        if (this._editor) {
+          this._editor.value(result);
+        }
       }
     }
   }
@@ -559,12 +575,6 @@ export default class Table {
       return this;
     }
     const v = _cells.get(row, col);
-
-    // If in formula editing mode, return the formula instead of the calculated value
-    if (this._isFormulaEditing && this._formulas[row][col]) {
-      //return this._formulas[row][col];
-    }
-
     return v != null ? v[2] : v;
   }
 
@@ -635,7 +645,6 @@ export default class Table {
     const currentFormula = this._formulas[row][col] || '=';
     const formulaBar = this._formulaBar as HElement;
     formulaBar.value(currentFormula);
-    //this._formulaBar.focus();
   }
 
   endFormulaEditing() {
