@@ -265,6 +265,7 @@ function move(
   step?: number
 ) {
   if (moveAutofill(t, direction)) return;
+  if (!step && t._restrictMultiLevelSelection) return;
   const { _selector, _data, _emitter } = t;
   const { viewport } = t._renderer;
   if (_selector && viewport) {
