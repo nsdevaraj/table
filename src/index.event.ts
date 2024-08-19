@@ -48,7 +48,7 @@ function mousedownHandler(t: Table, evt: any) {
     if (vcell) {
       _emitter.emit('click', vcell, evt);
       const { placement, row, col } = vcell;
-      if (shiftKey) {
+      if (shiftKey || ctrlKey || metaKey) {
         selector.unionRange(t, row, col);
       } else {
         // cache = { row, col };
