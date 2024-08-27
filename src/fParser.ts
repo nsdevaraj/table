@@ -152,8 +152,8 @@ class FParser {
   private getCellValue(cellRef: string): number {
     const col = this.letterToColumn(cellRef.match(/^[A-Z]+/)![0]);
     const row = parseInt(cellRef.match(/[0-9]+$/)![0]) - 1;
-    const cell = this.table.cellValue(row, col) as number;
-    return cell;
+    const cell = this.table.cell(row, col) as any;
+    return cell?.rawValue;
   }
 
   private getCellRangeValues(range: string): number[] {
