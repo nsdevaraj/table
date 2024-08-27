@@ -155,6 +155,7 @@ export default class Table {
   _defaultElement: HElement;
   _formulaBar: HElement | null;
   _formulaBarHeight: number = 15; // Height of the formula bar
+  _formulaBarWidth: number = 1300; // width of the formula bar
   _svgApplyRender: HElement;
   _svgCancelRender: HElement;
   _svgFormulaIcon: HElement;
@@ -216,11 +217,7 @@ export default class Table {
     this._container.append(canvasElement);
     this._canvas.before(this._defaultElement);
 
-    this._renderer = new TableRenderer(
-      canvasElement,
-      width(),
-      height() - this._formulaBarHeight
-    );
+    this._renderer = new TableRenderer(canvasElement, width(), height());
     this._overlayer = new Overlayer(this._container);
 
     // resize rect of content
@@ -290,7 +287,8 @@ export default class Table {
       if (typeof value === 'string' && value.startsWith('=')) {
         if (!this._formulaBar) {
           this._formulaBar = formulaContainer._createFormulaBar(
-            this._formulaBarHeight
+            this._formulaBarHeight,
+            this._formulaBarWidth
           );
           this.onAddingFormulaBar(this._formulaBar);
           this._formulaBar.focus();
@@ -338,7 +336,8 @@ export default class Table {
       if (formula) {
         if (!formulaBar) {
           this._formulaBar = formulaContainer._createFormulaBar(
-            this._formulaBarHeight
+            this._formulaBarHeight,
+            this._formulaBarWidth
           );
           this.onAddingFormulaBar(this._formulaBar);
 
