@@ -79,26 +79,25 @@ table.render();
 console.log('cell[2,2]:', table.cell(2, 2));
 
 // Set some initial values
-table.cell(0, 0, 10); // A1 = 10
-table.cell(0, 1, 20); // B1 = 20
-table.cell(1, 0, 30); // A2 = 30
+table.cell(0, 0, { rawValue: 10, value: '10' }); // A1 = 10
+table.cell(0, 1, { rawValue: 20, value: '20' }); // B1 = 20
+table.cell(1, 0, { rawValue: 30, value: '30' }); // A2 = 30
 
 // Set formulas
-table.setCellFormula(2, 0, '=A1+B1'); // A3 = A1 + B1
-table.setCellFormula(2, 1, '=A1*A2'); // B3 = A1 * A2
-table.setCellFormula(3, 0, '=A3+B3'); // A4 = A3 + B3
+// table.setCellFormula(2, 0, '=A1+B1'); // A3 = A1 + B1
+// table.setCellFormula(2, 1, '=A1*A2'); // B3 = A1 * A2
+// table.setCellFormula(3, 0, '=A3+B3'); // A4 = A3 + B3
 
 // Change a cell value
-table.cell(0, 0, 15); // A1 = 15
-
+// table.cell(0, 0, 15); // A1 = 15
 // Recalculate
 //table.recalculate();
 
 // Print the updated table
 console.log('\nAfter changing A1 to 15:');
 // Set some initial values
-table.cell(0, 0, 10);
-table.cell(1, 1, 20);
+// table.cell(0, 0, 10);
+// table.cell(1, 1, 20);
 
 //table._restrictFillRange = true;
 // Select cells and create a formula

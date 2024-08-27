@@ -1,11 +1,14 @@
 import HElement, { h } from './element';
-function _createFormulaBar(formulaBarHeight: number): HElement {
+function _createFormulaBar(
+  formulaBarHeight: number,
+  formulaBarWidth: number
+): HElement {
   return h('input')
     .attr('type', 'text')
     .attr('placeholder', 'Enter formula')
     .attr('id', 'formula-bar')
     .css({
-      width: 1300,
+      width: formulaBarWidth,
       height: formulaBarHeight,
       padding: '5px 5px 5px 5px',
       zIndex: '10',
