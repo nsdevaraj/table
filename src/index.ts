@@ -160,6 +160,9 @@ export default class Table {
   _svgCancelRender: HElement;
   _svgFormulaIcon: HElement;
 
+  // determines cell auto scroll to viewport on cell click function is enable or not
+  _isAutoMoveEnabled?: (row: number, col: number, t: Table) => boolean;
+
   constructor(
     element: HTMLElement | string,
     width: () => number,

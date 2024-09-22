@@ -55,7 +55,10 @@ function mousedownHandler(t: Table, evt: any) {
         _selector.placement(placement);
         selector.addRange(t, row, col, !(metaKey || ctrlKey));
         if (placement === 'body') {
-          scrollbar.autoMove(t, _selector.currentRange);
+          const isAutoMoveEnabled = t._isAutoMoveEnabled?.(row, col, t) ?? true;
+          if (isAutoMoveEnabled) {
+            scrollbar.autoMove(t, _selector.currentRange);
+          }
         }
       }
       selector.reset(t);
