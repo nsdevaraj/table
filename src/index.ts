@@ -879,7 +879,7 @@ function initTooltip(t: Table) {
     background: '#282828',
     'font-size': '12px',
     display: 'none',
-    'z-index': 99999,
+    'z-index': '99',
     left: -9999,
     top: -9999,
   });
