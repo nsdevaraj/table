@@ -74,8 +74,11 @@ function mousedownHandler(t: Table, evt: any) {
   }
 }
 
+let tooltipTimeout: NodeJS.Timeout | null;
+
 function mousemoveHandler(t: Table, evt: any) {
   const { _rowResizer, _colResizer, _renderer } = t;
+  const { _tooltipElement, _enableTooltip } = t;
   const { viewport } = _renderer;
   const { buttons, offsetX, offsetY } = evt;
   // press the mouse left button
@@ -96,6 +99,39 @@ function mousemoveHandler(t: Table, evt: any) {
       } else {
         _colResizer.hide();
       }
+    }
+  }
+  //tooltip for cells
+  if (tooltipTimeout) {
+    clearTimeout(tooltipTimeout);
+    tooltipTimeout = null;
+  }
+  if (_enableTooltip && viewport) {
+    const canvasDimension = t._canvas._.getBoundingClientRect();
+    const left = evt.clientX - canvasDimension.left;
+    const top = evt.clientY - canvasDimension.top;
+    const vcell = viewport.cellAt(offsetX, offsetY);
+    const cellValue = t.cell(vcell?.row as number, vcell?.col as number);
+    _tooltipElement.textContent('');
+    _tooltipElement.css({
+      display: 'none',
+      left: -9999,
+      top: -9999,
+    });
+    const showTooltip =
+      t._showTooltipForCell?.(vcell?.row as number, vcell?.col as number, t) ??
+      true;
+    const text = typeof cellValue === 'object' ? cellValue?.value : cellValue;
+
+    if (showTooltip && text) {
+      tooltipTimeout = setTimeout(() => {
+        _tooltipElement.textContent(String(text));
+        _tooltipElement.css({
+          display: 'block',
+          left,
+          top,
+        });
+      }, 1000);
     }
   }
 }

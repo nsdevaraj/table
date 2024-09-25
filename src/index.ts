@@ -159,6 +159,9 @@ export default class Table {
   _svgApplyRender: HElement;
   _svgCancelRender: HElement;
   _svgFormulaIcon: HElement;
+  _tooltipElement: HElement;
+  _enableTooltip?: boolean;
+  _showTooltipForCell?: (row: number, col: number, t: Table) => boolean;
 
   // determines cell auto scroll to viewport on cell click function is enable or not
   _isAutoMoveEnabled?: (row: number, col: number, t: Table) => boolean;
@@ -214,6 +217,7 @@ export default class Table {
       }
     }
 
+    this._tooltipElement = initTooltip(this);
     const canvasElement = document.createElement('canvas');
     // tabIndex for trigger keydown event
     this._canvas = h(canvasElement).attr('tabIndex', '1');
@@ -865,6 +869,24 @@ function resizeContentRect(t: Table) {
     width: colsWidth(t._data),
     height: rowsHeight(t._data),
   };
+}
+
+function initTooltip(t: Table) {
+  const tooltipElement = h('div', 'wolf-tooltip').css({
+    position: 'absolute',
+    padding: '2px 4px',
+    color: '#fff',
+    background: '#282828',
+    'font-size': '12px',
+    display: 'none',
+    'z-index': '99',
+    left: -9999,
+    top: -9999,
+  });
+  tooltipElement.textContent('');
+  t._container.append(tooltipElement);
+
+  return tooltipElement;
 }
 
 declare global {
