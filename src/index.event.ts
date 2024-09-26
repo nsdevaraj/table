@@ -14,6 +14,9 @@ export function initEvents(t: Table) {
     .on('mousemove', (evt) => {
       mousemoveHandler(t, evt);
     })
+    .on('mouseleave', (evt) => {
+      mouseleaveHandler(t, evt);
+    })
     .on('keydown', (evt) => {
       keydownHandler(t, evt);
     })
@@ -131,8 +134,31 @@ function mousemoveHandler(t: Table, evt: any) {
           left,
           top,
         });
+        const tooltipDimension = _tooltipElement._.getBoundingClientRect();
+        const bodyRight = document.body.getBoundingClientRect().right;
+        if (tooltipDimension.right > bodyRight) {
+          const adjustedLeft = left - tooltipDimension.width;
+          _tooltipElement.css({ left: adjustedLeft });
+        }
       }, 1000);
     }
+  }
+}
+
+function mouseleaveHandler(t: Table, evt: MouseEvent) {
+  //hide tooltip
+  const { _enableTooltip, _tooltipElement } = t;
+  if (_enableTooltip) {
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout);
+      tooltipTimeout = null;
+    }
+    _tooltipElement.textContent('');
+    _tooltipElement.css({
+      display: 'none',
+      left: -9999,
+      top: -9999,
+    });
   }
 }
 
