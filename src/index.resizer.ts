@@ -22,7 +22,7 @@ function init(t: Table) {
     (value, { col, width }) => {
       t.colWidth(col, width + value).render();
       const newWidth = width + value;
-      t._onColumnResize?.(col, newWidth, t);
+      t._afterColumnResize?.(col, newWidth, t);
       selector.reset(t);
       t._canvas.focus();
     }
