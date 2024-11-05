@@ -165,6 +165,12 @@ export default class Table {
 
   // determines cell auto scroll to viewport on cell click function is enable or not
   _isAutoMoveEnabled?: (row: number, col: number, t: Table) => boolean;
+  // run after column is resized
+  _afterColumnResize?: (
+    columnIndex: number,
+    newWidth: number,
+    t: Table
+  ) => void;
 
   constructor(
     element: HTMLElement | string,
